@@ -1,3 +1,5 @@
+import random
+
 # Word List
 words = [
     "abrupt", "acclaim", "adhere", "advice", "afflict", "agitate", "allocate", 
