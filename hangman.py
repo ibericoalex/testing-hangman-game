@@ -1,7 +1,7 @@
 # Word List
 words = [
     "abrupt", "acclaim", "adhere", "advice", "afflict", "agitate", "allocate", 
-    "ambition", "amplify", "anecdote"
+    "ambition", "amplify", "anecdote", ... # Continue until we have over 200 words.
 ]
 
 # Choose Difficulty Level
@@ -53,13 +53,13 @@ def play_game():
             guessed_letters.append(guess)
         else:
             incorrect_guesses += 1
-            print("Incorrect! You have {} lives left.".format(max_guesses - incorrect_guesses))
+            print(f"Incorrect! You have {max_guesses - incorrect_guesses} lives left.")
         
         if set(word_to_guess) <= set(guessed_letters):
-            print("{}, congratulations! You've successfully guessed the word!".format(username))
+            print(f"{username}, congratulations! You've successfully guessed the word!")
             break
         elif incorrect_guesses == max_guesses:
-            print("Sorry, {}, you've run out of guesses. The correct word was {}. Better luck next time!".format(username, word_to_guess))
+            print(f"Sorry, {username}, you've run out of guesses. The correct word was {word_to_guess}. Better luck next time!")
             break
 
 # View Rules
@@ -86,13 +86,13 @@ def main_menu():
         elif choice == "2":
             view_rules()
         elif choice == "3":
-            print("Thanks for playing, {}! Goodbye!".format(username))
+            print(f"Thanks for playing, {username}! Goodbye!")
             break
         else:
             print("Invalid choice. Please select a valid option.")
 
 # Main Execution
 if __name__ == "__main__":
-    username = input("Please enter your username: ")
-    print("Welcome, {}!".format(username))
+    username = input("Please enter your username: \n")
+    print(f"Welcome, {username}!")
     main_menu()
