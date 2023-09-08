@@ -1,4 +1,4 @@
-words = [
+word_list = [
     "design", "graphic", "print", "digital", "storytelling", "innovative", "professional", "content", "flyers", 
     "factsheets", "business", "audiovisual", "production", "recording", "posttreatment", "salesforce", "marketing", 
     "brand", "consistency", "social", "media", "campaigns", "conception", "execution", "curated", "published", 
