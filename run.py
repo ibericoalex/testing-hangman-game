@@ -1,168 +1,87 @@
+import os
 import random
+from words import word_list
+from hangman_pics import HANGMAN_PICS
 
-# Word List
-words = [
-    "abrupt", "acclaim", "adhere", "advice", "afflict", "agitate", "allocate", 
-    "ambition", "amplify", "anecdote"
-]
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
-# Choose Difficulty Level
-def choose_difficulty():
-    print("\nChoose a difficulty level:")
+
+def get_word(difficulty):
+    if difficulty == "1":
+        return random.choice([word for word in word_list if len(word) == 3])
+    elif difficulty == "2":
+        return random.choice([word for word in word_list if 4 <= len(word) <= 6])
+    else:
+        return random.choice([word for word in word_list if len(word) > 7])
+
+def play_game(username):
+    clear_screen()
+    print(f"\nHello, {username}! Choose a difficulty level:")
     print("1. Easy")
     print("2. Medium")
     print("3. Hard")
-    choice = input("Enter your choice (1/2/3): ")
-    return choice
+    difficulty = input("Enter a number (1/2/3): ")
+    while difficulty not in ["1", "2", "3"]:
+        difficulty = input(f"Invalid choice, {username}. Please choose again (1/2/3): ")
 
-# Display the current state of the word
-def display_word(word, guessed_letters):
-    display = ''
-    for letter in word:
-        if letter in guessed_letters:
-            display += letter
-        else:
-            display += '_'
-    return display
-
-# ASCII Art for Hangman
-def display_hangman(incorrect_guesses):
-    stages = [  # final state: head, torso, both arms, and both legs
-                """
-                   --------
-                   |      |
-                   |      O
-                   |     \\|/
-                   |      |
-                   |     / \\
-                   -
-                """,
-                # head, torso, both arms, and one leg
-                """
-                   --------
-                   |      |
-                   |      O
-                   |     \\|/
-                   |      |
-                   |     / 
-                   -
-                """,
-                # head, torso, and both arms
-                """
-                   --------
-                   |      |
-                   |      O
-                   |     \\|/
-                   |      |
-                   |      
-                   -
-                """,
-                # head, torso, and one arm
-                """
-                   --------
-                   |      |
-                   |      O
-                   |     \\|
-                   |      |
-                   |     
-                   -
-                """,
-                # head and torso
-                """
-                   --------
-                   |      |
-                   |      O
-                   |      |
-                   |      |
-                   |     
-                   -
-                """,
-                # head
-                """
-                   --------
-                   |      |
-                   |      O
-                   |    
-                   |      
-                   |     
-                   -
-                """,
-                # initial empty state
-                """
-                   --------
-                   |      |
-                   |      
-                   |    
-                   |      
-                   |     
-                   -
-                """
-    ]
-    print(stages[incorrect_guesses])
-
-# Main Game Loop
-def play_game():
-    difficulty = choose_difficulty()
-    if difficulty == "1":
-        max_guesses = 5
-    elif difficulty == "2":
-        max_guesses = 7
-    else:
-        max_guesses = 9
-
-    word_to_guess = random.choice(words)
-    guessed_letters = []
+    word = get_word(difficulty).upper()
+    guessed = ["_"] * len(word)
     incorrect_guesses = 0
+    max_guesses = {"1": 5, "2": 6, "3": 8}
+    incorrect_guessed_letters = []
 
-    while True:
-        print(display_word(word_to_guess, guessed_letters))
-        display_hangman(incorrect_guesses)
-        guess = input("Guess a letter: ").lower()
-        
-        if guess in word_to_guess:
-            guessed_letters.append(guess)
+    while "_" in guessed and incorrect_guesses < max_guesses[difficulty]:
+        clear_screen()
+        print(HANGMAN_PICS[incorrect_guesses])
+        print(" ".join(guessed))
+        print(f"Incorrectly guessed letters, {username}: {', '.join(incorrect_guessed_letters)}")
+        print(f"Attempts left, {username}: {max_guesses[difficulty] - incorrect_guesses}")
+        guess = input("Guess a letter: ").upper()
+
+        if guess in guessed or guess in incorrect_guessed_letters:
+            print(f"You've already guessed that letter, {username}. Try again.")
+            continue
+
+        if guess in word:
+            for i, letter in enumerate(word):
+                if letter == guess:
+                    guessed[i] = guess
         else:
             incorrect_guesses += 1
-            print(f"Incorrect! You have {max_guesses - incorrect_guesses} lives left.")
-        
-        if set(word_to_guess) <= set(guessed_letters):
-            print(f"{username}, congratulations! You've successfully guessed the word!")
-            break
-        elif incorrect_guesses == max_guesses:
-            print(f"Sorry, {username}, you've run out of guesses. The correct word was {word_to_guess}. Better luck next time!")
-            break
+            incorrect_guessed_letters.append(guess)
 
-# View Rules
-def view_rules():
-    print("\nRules of Hangman:")
-    print("1. A random word will be chosen.")
-    print("2. You have to guess the word letter by letter.")
-    print("3. For each incorrect guess, a part of the hangman will be drawn.")
-    print("4. The game ends when you guess the word correctly or the hangman is fully drawn.")
-    print("5. The number of guesses allowed depends on the chosen difficulty level.")
-    input("\nPress Enter to return to the main menu.")
+    print(HANGMAN_PICS[incorrect_guesses])
+    if "_" not in guessed:
+        print(f"Congratulations, {username}! You guessed the word: {word}")
+    else:
+        print(f"Sorry, {username}. You ran out of guesses. The word was: {word}")
 
-# Main Menu
-def main_menu():
+def main():
+    print("Welcome to Hangman!")
+    username = input("Enter your username: ")
+    print(random.choice([f"Let's have some fun, {username}!", f"Ready to guess, {username}?", f"Can you beat the game, {username}?"]))
+
     while True:
-        print("\nMain Menu:")
+        print(f"\nHello, {username}! What would you like to do?")
         print("1. Start Game")
         print("2. View Rules")
         print("3. Exit Game")
-        choice = input("Enter your choice (1/2/3): ")
+        choice = input("Choose an option (1/2/3): ")
 
         if choice == "1":
-            play_game()
+            play_game(username)
         elif choice == "2":
-            view_rules()
+            print("\nRules:")
+            print("1. Choose a difficulty level by entering a number.")
+            print("2. Guess letters to uncover the hidden word.")
+            print("3. You have a limited number of incorrect guesses based on the difficulty.")
+            print("4. If you guess the word before running out of guesses, you win!")
         elif choice == "3":
             print(f"Thanks for playing, {username}! Goodbye!")
             break
         else:
-            print("Invalid choice. Please select a valid option.")
+            print(f"Invalid choice, {username}. Please choose again.")
 
-# Main Execution
 if __name__ == "__main__":
-    username = input("Please enter your username: ")
-    print(f"Welcome, {username}!")
-    main_menu()
+    main()
